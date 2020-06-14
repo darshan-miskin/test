@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Test</string>
+    <string name="name_age">%1$s %2$s, %3$d</string>
+    <string name="city_state">%1$s, %2$s</string>
 </resources>
