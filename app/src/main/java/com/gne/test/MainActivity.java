@@ -11,6 +11,7 @@ import android.widget.Toast;
 import com.gne.test.adapters.CardStackAdapter;
 import com.gne.test.databinding.ActivityMainBinding;
 import com.gne.test.viewmodels.UserViewModel;
+import com.gne.test.vo.Result;
 import com.gne.test.vo.User;
 import com.google.android.material.snackbar.Snackbar;
 import com.yuyakaido.android.cardstackview.CardStackLayoutManager;
@@ -27,8 +28,9 @@ public class MainActivity extends AppCompatActivity implements CardStackListener
 
     private ActivityMainBinding binding;
 
-    private int count=10, index=0;
+    private int index=0;
     private boolean isEnd=false;
+    private Result result=new Result();
     private ArrayList<User> arrayList=new ArrayList<>();
     private CardStackLayoutManager manager;
     private CardStackAdapter adapter;
@@ -39,17 +41,17 @@ public class MainActivity extends AppCompatActivity implements CardStackListener
         super.onCreate(savedInstanceState);
         binding= DataBindingUtil.setContentView(MainActivity.this,R.layout.activity_main);
 
-        if(!Common.isNetworkAvailable(this)){
-            count=0;
-        }
+        userViewModel= new ViewModelProvider(MainActivity.this).get(UserViewModel.class);
 
-        userViewModel= new ViewModelProvider(this).get(UserViewModel.class);
-        userViewModel.getUsers(count).observe(this,result -> {
+        Toast.makeText(this,userViewModel.getCount()+"",Toast.LENGTH_SHORT).show();
+        userViewModel.getUsers().observe(this,result -> {
+            MainActivity.this.result=result;
             if(result.isStatus()) {
                 if(result.getResults().size()!=0) {
                     binding.txtInfo.setVisibility(View.GONE);
+                    binding.cardStackView.smoothScrollToPosition(index);
                     arrayList.addAll(result.getResults());
-                    adapter.notifyItemRangeInserted(count - 9,count);
+                    adapter.notifyItemRangeInserted(userViewModel.getCount() - 9,userViewModel.getCount());
 //                    adapter.notifyDataSetChanged();
                 }else {
                     isEnd=true;
@@ -108,6 +110,13 @@ public class MainActivity extends AppCompatActivity implements CardStackListener
         else {
             setDislike();
         }
+        arrayList.remove(index);
+        result.getResults().remove(index);
+
+        if (manager.getTopPosition() == adapter.getItemCount()-3 && !isEnd) {
+            userViewModel.setCount(userViewModel.getCount()+10);
+            userViewModel.fetchUsers();
+        }
     }
 
     @Override
@@ -124,10 +133,6 @@ public class MainActivity extends AppCompatActivity implements CardStackListener
     public void onCardAppeared(View view, int position) {
 //        Toast.makeText(this,arrayList.get(position).getName().first,Toast.LENGTH_SHORT).show();
         index=position;
-        if (manager.getTopPosition() == adapter.getItemCount()-3 && !isEnd) {
-            count+=10;
-            userViewModel.getUsers(count);
-        }
     }
 
     @Override
