@@ -43,7 +43,6 @@ public class MainActivity extends AppCompatActivity implements CardStackListener
 
         userViewModel= new ViewModelProvider(MainActivity.this).get(UserViewModel.class);
 
-        Toast.makeText(this,userViewModel.getCount()+"",Toast.LENGTH_SHORT).show();
         userViewModel.getUsers().observe(this,result -> {
             MainActivity.this.result=result;
             if(result.isStatus()) {
