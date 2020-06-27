@@ -5,6 +5,7 @@ import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.View;
 import android.widget.Toast;
 
@@ -109,9 +110,6 @@ public class MainActivity extends AppCompatActivity implements CardStackListener
         else {
             setDislike();
         }
-        arrayList.remove(index);
-        result.getResults().remove(index);
-
         if (manager.getTopPosition() == adapter.getItemCount()-3 && !isEnd) {
             userViewModel.setCount(userViewModel.getCount()+10);
             userViewModel.fetchUsers();
@@ -130,13 +128,13 @@ public class MainActivity extends AppCompatActivity implements CardStackListener
 
     @Override
     public void onCardAppeared(View view, int position) {
-//        Toast.makeText(this,arrayList.get(position).getName().first,Toast.LENGTH_SHORT).show();
         index=position;
     }
 
     @Override
     public void onCardDisappeared(View view, int position) {
-
+//        arrayList.remove(position);
+//        result.getResults().remove(position);
     }
 
 
